@@ -3,201 +3,136 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>作品集圖庫</title>
+<title>作品集管理</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 :root {
-  --pink-0: #fff0f5;
-  --pink-1: #ffd6e7;
-  --pink-2: #ffadd2;
-  --pink-3: #f783ac;
-  --pink-4: #e64980;
-  --cream: #fffaf7;
-  --text-main: #3d2035;
-  --text-mid: #8b5a72;
-  --text-soft: #c490a8;
-  --border: rgba(247,131,172,0.25);
-  --border-strong: rgba(247,131,172,0.5);
-  --radius: 14px;
-  --radius-sm: 8px;
+  --pink-0: #fff0f5; --pink-1: #ffd6e7; --pink-2: #ffadd2;
+  --pink-3: #f783ac; --pink-4: #e64980;
+  --text-main: #3d2035; --text-mid: #8b5a72; --text-soft: #c490a8;
+  --border: rgba(247,131,172,0.25); --border-s: rgba(247,131,172,0.5);
+  --r: 14px; --rs: 8px;
 }
-
 body {
-  font-family: 'Helvetica Neue', 'Noto Sans TC', system-ui, sans-serif;
-  background: linear-gradient(160deg, #fff0f5 0%, #fff8fb 40%, #f8f4ff 100%);
-  min-height: 100vh;
-  color: var(--text-main);
-  padding: 24px 18px 40px;
+  font-family: 'Helvetica Neue','Noto Sans TC',system-ui,sans-serif;
+  background: linear-gradient(160deg,#fff0f5 0%,#fff8fb 40%,#f8f4ff 100%);
+  min-height: 100vh; color: var(--text-main); padding: 24px 18px 48px;
 }
-
-.petals { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.petals { position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
 .petal {
-  position: absolute; top: -40px;
-  background: radial-gradient(circle at 40% 40%, #ffb7d5, #ff85b8);
-  border-radius: 50% 0 50% 0;
-  opacity: 0;
-  animation: fall linear infinite;
+  position:absolute; top:-40px;
+  background: radial-gradient(circle at 40% 40%,#ffb7d5,#ff85b8);
+  border-radius:50% 0 50% 0; opacity:0; animation:fall linear infinite;
 }
-.petal:nth-child(1)  { left:5%;  width:8px;  height:8px;  animation-duration:7s;  animation-delay:0s;   }
-.petal:nth-child(2)  { left:15%; width:11px; height:11px; animation-duration:9s;  animation-delay:1.5s; }
-.petal:nth-child(3)  { left:25%; width:7px;  height:7px;  animation-duration:6s;  animation-delay:3s;   }
-.petal:nth-child(4)  { left:38%; width:13px; height:13px; animation-duration:11s; animation-delay:0.5s; }
-.petal:nth-child(5)  { left:50%; width:9px;  height:9px;  animation-duration:8s;  animation-delay:2s;   }
-.petal:nth-child(6)  { left:62%; width:10px; height:10px; animation-duration:10s; animation-delay:4s;   }
-.petal:nth-child(7)  { left:74%; width:7px;  height:7px;  animation-duration:7s;  animation-delay:1s;   }
-.petal:nth-child(8)  { left:85%; width:12px; height:12px; animation-duration:9s;  animation-delay:3.5s; }
-.petal:nth-child(9)  { left:93%; width:8px;  height:8px;  animation-duration:6s;  animation-delay:2.5s; }
-.petal:nth-child(10) { left:45%; width:6px;  height:6px;  animation-duration:12s; animation-delay:5s;   }
+.petal:nth-child(1){left:5%;width:8px;height:8px;animation-duration:7s;animation-delay:0s}
+.petal:nth-child(2){left:15%;width:11px;height:11px;animation-duration:9s;animation-delay:1.5s}
+.petal:nth-child(3){left:25%;width:7px;height:7px;animation-duration:6s;animation-delay:3s}
+.petal:nth-child(4){left:38%;width:13px;height:13px;animation-duration:11s;animation-delay:0.5s}
+.petal:nth-child(5){left:50%;width:9px;height:9px;animation-duration:8s;animation-delay:2s}
+.petal:nth-child(6){left:62%;width:10px;height:10px;animation-duration:10s;animation-delay:4s}
+.petal:nth-child(7){left:74%;width:7px;height:7px;animation-duration:7s;animation-delay:1s}
+.petal:nth-child(8){left:85%;width:12px;height:12px;animation-duration:9s;animation-delay:3.5s}
+.petal:nth-child(9){left:93%;width:8px;height:8px;animation-duration:6s;animation-delay:2.5s}
+.petal:nth-child(10){left:45%;width:6px;height:6px;animation-duration:12s;animation-delay:5s}
 @keyframes fall {
-  0%   { transform: translateY(0) rotate(0deg) translateX(0);    opacity: 0; }
-  10%  { opacity: 0.7; }
-  90%  { opacity: 0.4; }
-  100% { transform: translateY(110vh) rotate(360deg) translateX(40px); opacity: 0; }
+  0%{transform:translateY(0) rotate(0deg) translateX(0);opacity:0}
+  10%{opacity:0.7} 90%{opacity:0.4}
+  100%{transform:translateY(110vh) rotate(360deg) translateX(40px);opacity:0}
 }
+.wrap { position:relative; z-index:1; max-width:660px; margin:0 auto; }
+.page-title { text-align:center; font-size:22px; font-weight:600; margin-bottom:4px; letter-spacing:0.04em; }
+.page-sub   { text-align:center; font-size:13px; color:var(--text-soft); margin-bottom:30px; }
 
-.wrap { position: relative; z-index: 1; max-width: 680px; margin: 0 auto; }
-
-.page-title { text-align: center; font-size: 22px; font-weight: 600; color: var(--text-main); margin-bottom: 5px; letter-spacing: 0.04em; }
-.page-sub   { text-align: center; font-size: 13px; color: var(--text-soft); margin-bottom: 28px; }
-
-.section { margin-bottom: 32px; }
-.section-label {
-  font-size: 11px; font-weight: 700; letter-spacing: 0.13em;
-  text-transform: uppercase; color: var(--text-soft); margin-bottom: 10px;
-  display: flex; align-items: center; gap: 6px;
+/* upload card */
+.card {
+  background:rgba(255,255,255,0.82); border:1px solid var(--border-s);
+  border-radius:var(--r); padding:22px 24px; margin-bottom:20px;
+  backdrop-filter:blur(6px);
+  box-shadow:0 4px 20px rgba(230,73,128,0.07);
 }
-.section-label::before { content:''; display:inline-block; width:16px; height:2px; background:var(--pink-3); border-radius:2px; }
+.card-title { font-size:13px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-soft); margin-bottom:16px; display:flex; align-items:center; gap:6px; }
+.card-title::before { content:''; display:inline-block; width:14px; height:2px; background:var(--pink-3); border-radius:2px; }
 
-/* carousel */
-.carousel {
-  position: relative; width: 100%;
-  background: var(--pink-0); border-radius: var(--radius);
-  overflow: hidden; border: 1px solid var(--border);
-  box-shadow: 0 4px 24px rgba(230,73,128,0.08);
+.field { margin-bottom:14px; }
+.field label { display:block; font-size:12px; color:var(--text-mid); margin-bottom:5px; }
+.field input[type="text"] {
+  width:100%; padding:8px 11px; border:1px solid var(--border-s); border-radius:var(--rs);
+  font-size:13px; background:#fff; color:var(--text-main); outline:none;
+  transition:border-color 0.15s;
 }
-.carousel.ratio-43  { aspect-ratio: 4/3; }
-.carousel.ratio-169 { aspect-ratio: 16/9; }
-.carousel.ratio-11  { aspect-ratio: 1/1;  max-width:480px; margin:0 auto; }
-.carousel.ratio-34  { aspect-ratio: 3/4;  max-width:420px; margin:0 auto; }
-.carousel.ratio-916 { aspect-ratio: 9/16; max-width:320px; margin:0 auto; }
-
-.track { display:flex; height:100%; transition: transform 0.42s cubic-bezier(0.25,0.1,0.25,1); }
-.slide { min-width:100%; height:100%; position:relative; overflow:hidden; }
-.slide img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.4s ease; pointer-events:none; }
-.slide:hover img { transform: scale(1.03); }
-.caption {
-  position:absolute; bottom:0; left:0; right:0;
-  padding:2.5rem 1.2rem 1rem;
-  background: linear-gradient(transparent, rgba(61,32,53,0.55));
-  color:#fff; font-size:13px; font-weight:500;
-  opacity:0; transition:opacity 0.25s; pointer-events:none;
-}
-.slide:hover .caption { opacity:1; }
-.slide-empty {
-  min-width:100%; height:100%;
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  color:var(--text-soft); gap:8px;
-}
-.slide-empty svg { width:36px; height:36px; stroke:var(--pink-3); fill:none; opacity:0.5; }
-.slide-empty p { font-size:13px; }
-
-.nav {
-  position:absolute; top:50%; transform:translateY(-50%);
-  width:34px; height:34px; background:rgba(255,255,255,0.85);
-  border:1px solid var(--border-strong); border-radius:50%;
-  display:flex; align-items:center; justify-content:center;
-  cursor:pointer; z-index:10;
-  box-shadow:0 2px 8px rgba(230,73,128,0.12);
-  transition:background 0.15s, transform 0.15s;
-}
-.nav:hover { background:#fff; transform:translateY(-50%) scale(1.1); }
-.nav.prev { left:10px; } .nav.next { right:10px; }
-.nav svg { width:16px; height:16px; stroke:var(--pink-4); fill:none; stroke-width:2.5; }
-
-.dots { display:flex; justify-content:center; gap:6px; padding:9px 0 3px; }
-.dot { width:6px; height:6px; border-radius:50%; background:var(--pink-1); border:none; padding:0; cursor:pointer; transition:background 0.2s, transform 0.2s; }
-.dot.on { background:var(--pink-3); transform:scale(1.35); }
-
-.thumbs { display:grid; grid-template-columns:repeat(auto-fill,minmax(64px,1fr)); gap:5px; margin-top:8px; }
-.thumb { aspect-ratio:4/3; overflow:hidden; border-radius:6px; cursor:pointer; border:2px solid transparent; opacity:0.6; transition:opacity 0.2s, border-color 0.2s; }
-.thumb.on { opacity:1; border-color:var(--pink-3); }
-.thumb img { width:100%; height:100%; object-fit:cover; display:block; }
-.counter { text-align:right; font-size:11px; color:var(--text-soft); padding:3px 2px 0; }
-
-/* ratio buttons */
-.ratio-btns { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
-.rbtn {
-  padding:5px 11px; border:1px solid var(--border-strong); border-radius:20px;
-  background:#fff; font-size:12px; color:var(--text-mid); cursor:pointer;
-  transition:background 0.15s, color 0.15s, border-color 0.15s;
-}
-.rbtn:hover { background:var(--pink-0); }
-.rbtn.on { background:var(--pink-3); color:#fff; border-color:var(--pink-3); }
-
-/* config */
-.config { margin-top:14px; border:1px dashed var(--border-strong); border-radius:var(--radius-sm); padding:14px 16px; background:rgba(255,240,245,0.6); }
-.config-title { font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-soft); margin-bottom:12px; }
+.field input[type="text"]:focus { border-color:var(--pink-3); }
+.field-hint { font-size:11px; color:var(--text-soft); margin-top:4px; }
 
 .upload-zone {
-  border:1.5px dashed var(--pink-2); border-radius:var(--radius-sm);
-  padding:16px; text-align:center; cursor:pointer; margin-bottom:10px;
+  border:1.5px dashed var(--pink-2); border-radius:var(--rs);
+  padding:28px 16px; text-align:center; cursor:pointer;
   background:rgba(255,255,255,0.7); transition:background 0.15s, border-color 0.15s;
-  position:relative;
+  position:relative; margin-bottom:14px;
 }
 .upload-zone:hover, .upload-zone.drag { background:var(--pink-0); border-color:var(--pink-3); }
 .upload-zone input { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
-.upload-zone p { font-size:12px; color:var(--text-mid); pointer-events:none; }
-.upload-zone span { font-size:22px; display:block; margin-bottom:4px; }
-.upload-progress { margin:6px 0; }
-.progress-bar { height:4px; background:var(--pink-1); border-radius:4px; overflow:hidden; margin-bottom:4px; }
-.progress-fill { height:100%; background:var(--pink-3); border-radius:4px; transition:width 0.3s; width:0%; }
-.progress-label { font-size:11px; color:var(--text-soft); }
+.upload-zone .uz-icon { font-size:28px; margin-bottom:6px; }
+.upload-zone .uz-main { font-size:14px; font-weight:500; color:var(--text-mid); margin-bottom:3px; }
+.upload-zone .uz-sub  { font-size:12px; color:var(--text-soft); }
 
-.row { display:flex; gap:7px; align-items:center; margin-bottom:7px; }
-.row input[type="text"] { flex:1; padding:6px 9px; border:1px solid var(--border-strong); border-radius:6px; font-size:12px; background:#fff; outline:none; color:var(--text-main); transition:border-color 0.15s; }
-.row input[type="text"]:focus { border-color:var(--pink-3); }
-.cap-in { flex:0 0 110px !important; }
-.btn-del { flex-shrink:0; width:28px; height:28px; background:#fff; border:1px solid var(--border); border-radius:6px; cursor:pointer; font-size:15px; color:var(--text-soft); display:flex; align-items:center; justify-content:center; transition:background 0.15s, color 0.15s; }
-.btn-del:hover { background:#fff0f0; color:#c33; border-color:#fcc; }
-.btn-add { padding:6px 12px; background:#fff; border:1px dashed var(--pink-2); border-radius:6px; font-size:12px; color:var(--text-mid); cursor:pointer; margin-bottom:10px; transition:background 0.15s; }
-.btn-add:hover { background:var(--pink-0); }
-.btn-save { padding:7px 18px; background:linear-gradient(135deg,var(--pink-3),var(--pink-4)); color:#fff; border:none; border-radius:6px; font-size:12px; cursor:pointer; box-shadow:0 2px 8px rgba(230,73,128,0.25); transition:opacity 0.15s; }
-.btn-save:hover { opacity:0.88; }
-.hint { font-size:11px; color:var(--text-soft); margin-top:8px; line-height:1.6; }
+.progress-wrap { margin-bottom:14px; display:none; }
+.progress-bar  { height:5px; background:var(--pink-1); border-radius:4px; overflow:hidden; margin-bottom:5px; }
+.progress-fill { height:100%; background:linear-gradient(90deg,var(--pink-3),var(--pink-4)); border-radius:4px; transition:width 0.3s; width:0%; }
+.progress-label { font-size:12px; color:var(--text-mid); }
 
-.ap-row { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-mid); margin-bottom:10px; }
-.toggle { position:relative; width:34px; height:19px; cursor:pointer; }
-.toggle input { display:none; }
-.ttr { position:absolute; inset:0; background:var(--pink-1); border-radius:20px; transition:background 0.2s; }
-.toggle input:checked + .ttr { background:var(--pink-3); }
-.tth { position:absolute; top:2.5px; left:2.5px; width:14px; height:14px; background:#fff; border-radius:50%; transition:left 0.2s; }
-.toggle input:checked ~ .tth { left:17.5px; }
+/* result box */
+.result-box {
+  background:var(--pink-0); border:1px solid var(--border-s);
+  border-radius:var(--rs); padding:16px 18px; display:none;
+}
+.result-box .res-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-soft); margin-bottom:8px; }
+.result-box .res-folder { font-size:13px; color:var(--text-mid); margin-bottom:12px; }
+.result-box .res-folder span { font-weight:600; color:var(--pink-4); }
 
-/* embed panel */
-.embed-panel { background:rgba(255,255,255,0.8); border:1px solid var(--border-strong); border-radius:var(--radius); padding:18px 20px; margin-top:32px; }
-.embed-title { font-size:14px; font-weight:600; color:var(--text-main); margin-bottom:14px; }
-.embed-row { display:flex; gap:8px; align-items:center; margin-bottom:10px; flex-wrap:wrap; }
-.embed-row label { font-size:12px; color:var(--text-mid); min-width:56px; }
-.embed-row input[type="text"] { flex:1; min-width:200px; padding:6px 9px; border:1px solid var(--border-strong); border-radius:6px; font-size:12px; background:#fff; color:var(--text-main); outline:none; transition:border-color 0.15s; }
-.embed-row input[type="text"]:focus { border-color:var(--pink-3); }
-.embed-row input[type="number"] { width:66px; padding:6px 8px; border:1px solid var(--border-strong); border-radius:6px; font-size:12px; background:#fff; color:var(--text-main); outline:none; }
-.embed-row select { padding:6px 8px; border:1px solid var(--border-strong); border-radius:6px; font-size:12px; background:#fff; color:var(--text-main); outline:none; }
-.code-box { background:#fff8fb; border:1px solid var(--border); border-radius:6px; padding:10px 12px; font-family:monospace; font-size:11px; color:var(--text-mid); word-break:break-all; line-height:1.6; margin-bottom:8px; user-select:all; }
-.btn-copy { padding:7px 18px; background:linear-gradient(135deg,var(--pink-3),var(--pink-4)); color:#fff; border:none; border-radius:6px; font-size:12px; cursor:pointer; box-shadow:0 2px 8px rgba(230,73,128,0.2); transition:opacity 0.15s; }
-.btn-copy:hover { opacity:0.88; }
-.copy-ok { font-size:11px; color:#40c057; margin-left:8px; opacity:0; transition:opacity 0.3s; }
+.code-section { margin-bottom:12px; }
+.code-section .code-label { font-size:11px; color:var(--text-soft); margin-bottom:4px; }
+.code-box {
+  background:#fff; border:1px solid var(--border); border-radius:6px;
+  padding:9px 11px; font-family:monospace; font-size:11px; color:var(--text-mid);
+  word-break:break-all; line-height:1.6; user-select:all;
+}
+.btn-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+.btn-copy, .btn-open {
+  padding:7px 16px; border-radius:6px; font-size:12px; cursor:pointer;
+  transition:opacity 0.15s; border:none;
+}
+.btn-copy { background:linear-gradient(135deg,var(--pink-3),var(--pink-4)); color:#fff; box-shadow:0 2px 8px rgba(230,73,128,0.2); }
+.btn-open { background:#fff; border:1px solid var(--border-s) !important; color:var(--text-mid); }
+.btn-copy:hover, .btn-open:hover { opacity:0.82; }
+.copy-ok { font-size:11px; color:#40c057; margin-left:4px; opacity:0; transition:opacity 0.3s; display:inline-block; }
 .copy-ok.show { opacity:1; }
 
-@media(max-width:480px){
-  .cap-in { flex:1 !important; min-width:0; }
-  .row { flex-wrap:wrap; }
-  .embed-row input[type="text"] { min-width:100%; }
+/* album list */
+.album-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px; }
+.album-card {
+  background:rgba(255,255,255,0.82); border:1px solid var(--border);
+  border-radius:var(--rs); overflow:hidden; cursor:pointer;
+  transition:box-shadow 0.2s, transform 0.2s;
 }
+.album-card:hover { box-shadow:0 4px 16px rgba(230,73,128,0.15); transform:translateY(-2px); }
+.album-thumb { aspect-ratio:4/3; overflow:hidden; background:var(--pink-0); position:relative; }
+.album-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+.album-thumb .no-img { width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:24px; color:var(--pink-2); }
+.album-info { padding:10px 12px; }
+.album-name { font-size:12px; font-weight:600; color:var(--text-main); margin-bottom:2px; word-break:break-all; }
+.album-count { font-size:11px; color:var(--text-soft); }
+.album-actions { display:flex; gap:6px; margin-top:8px; }
+.ab-btn { flex:1; padding:5px 0; border-radius:5px; font-size:11px; cursor:pointer; border:none; text-align:center; transition:opacity 0.15s; }
+.ab-embed { background:linear-gradient(135deg,var(--pink-3),var(--pink-4)); color:#fff; }
+.ab-open  { background:var(--pink-0); color:var(--text-mid); border:1px solid var(--border-s) !important; }
+.ab-btn:hover { opacity:0.8; }
+
+.empty-albums { text-align:center; padding:32px; color:var(--text-soft); font-size:13px; }
+
+@media(max-width:480px){ .album-grid { grid-template-columns:1fr 1fr; } }
 </style>
 </head>
 <body>
-
 <div class="petals">
   <div class="petal"></div><div class="petal"></div><div class="petal"></div>
   <div class="petal"></div><div class="petal"></div><div class="petal"></div>
@@ -206,136 +141,151 @@ body {
 </div>
 
 <div class="wrap">
-  <p class="page-title">🌸 作品集圖庫</p>
-  <p class="page-sub">攝影作品 × 社群圖文</p>
+  <p class="page-title">🌸 作品集管理</p>
+  <p class="page-sub">上傳即建立相簿，一鍵取得 Notion 嵌入語法</p>
 
-  <!-- 攝影作品 -->
-  <div class="section">
-    <div class="section-label">攝影作品</div>
-    <div class="ratio-btns" id="rbtn-photo">
-      <button class="rbtn on" data-r="ratio-43">4:3</button>
-      <button class="rbtn" data-r="ratio-169">16:9</button>
-      <button class="rbtn" data-r="ratio-11">1:1</button>
-      <button class="rbtn" data-r="ratio-34">3:4</button>
-      <button class="rbtn" data-r="ratio-916">9:16</button>
+  <!-- 上傳區 -->
+  <div class="card">
+    <div class="card-title">新增相簿</div>
+
+    <div class="field">
+      <label>相簿名稱（留空則自動用時間碼命名）</label>
+      <input type="text" id="album-name" placeholder="例：2026春季展覽、峇里島旅拍…">
+      <div class="field-hint">自動命名格式：20260405_143022</div>
     </div>
-    <div class="carousel ratio-43" id="car-photo">
-      <div class="track" id="tr-photo"></div>
-      <button class="nav prev" id="pp"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
-      <button class="nav next" id="pn"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+
+    <div class="upload-zone" id="upload-zone">
+      <input type="file" accept="image/*" multiple id="file-input">
+      <div class="uz-icon">🌸</div>
+      <div class="uz-main">點擊或拖曳圖片到這裡</div>
+      <div class="uz-sub">支援 JPG、PNG、WebP，可多選</div>
     </div>
-    <div class="counter" id="ct-photo"></div>
-    <div class="dots" id="dt-photo"></div>
-    <div class="thumbs" id="th-photo"></div>
-    <div class="config">
-      <div class="config-title">⚙ 攝影作品設定</div>
-      <div class="ap-row">
-        <label class="toggle"><input type="checkbox" id="ap-photo" checked><div class="ttr"></div><div class="tth"></div></label>
-        自動輪播
-        <input type="number" id="api-photo" value="5" min="1" max="60" style="width:44px;padding:4px 6px;border:1px solid var(--border-strong);border-radius:5px;font-size:12px;color:var(--text-main);">秒
+
+    <div class="progress-wrap" id="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="progress-label" id="progress-label"></div>
+    </div>
+
+    <!-- 結果 -->
+    <div class="result-box" id="result-box">
+      <div class="res-label">✓ 相簿建立完成</div>
+      <div class="res-folder" id="res-folder"></div>
+
+      <div class="code-section">
+        <div class="code-label">嵌入 Notion 的 iframe 語法</div>
+        <div class="code-box" id="res-iframe"></div>
       </div>
-      <div class="upload-zone" id="uz-photo">
-        <input type="file" accept="image/*" multiple id="uf-photo">
-        <span>🌸</span>
-        <p>點擊或拖曳圖片，直接上傳至 Cloudinary</p>
+      <div class="code-section">
+        <div class="code-label">或直接貼入 Notion 的公開連結</div>
+        <div class="code-box" id="res-url"></div>
       </div>
-      <div class="upload-progress" id="uprog-photo" style="display:none;">
-        <div class="progress-bar"><div class="progress-fill" id="pfill-photo"></div></div>
-        <div class="progress-label" id="plabel-photo"></div>
+      <div class="btn-row">
+        <button class="btn-copy" id="btn-copy-iframe">複製 iframe</button>
+        <span class="copy-ok" id="ok-iframe">✓ 已複製</span>
+        <button class="btn-copy" id="btn-copy-url">複製連結</button>
+        <span class="copy-ok" id="ok-url">✓ 已複製</span>
+        <button class="btn-open" id="btn-preview">預覽輪播</button>
       </div>
-      <div id="ul-photo"></div>
-      <button class="btn-add" id="add-photo">＋ 手動貼入網址</button><br>
-      <button class="btn-save" id="save-photo">套用更新</button>
-      <p class="hint">上傳後網址自動填入。若需裁切比例可在網址加入 <code>/w_1200,c_fill,ar_4:3/</code> 參數。</p>
     </div>
   </div>
 
-  <!-- 社群圖文 -->
-  <div class="section">
-    <div class="section-label">社群圖文</div>
-    <div class="ratio-btns" id="rbtn-social">
-      <button class="rbtn" data-r="ratio-43">4:3</button>
-      <button class="rbtn" data-r="ratio-169">16:9</button>
-      <button class="rbtn" data-r="ratio-11">1:1</button>
-      <button class="rbtn" data-r="ratio-34">3:4</button>
-      <button class="rbtn on" data-r="ratio-916">9:16</button>
+  <!-- 相簿列表 -->
+  <div class="card">
+    <div class="card-title">我的相簿</div>
+    <div class="album-grid" id="album-grid">
+      <div class="empty-albums">上傳第一批照片後，相簿會顯示在這裡</div>
     </div>
-    <div class="carousel ratio-916" id="car-social">
-      <div class="track" id="tr-social"></div>
-      <button class="nav prev" id="sp"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
-      <button class="nav next" id="sn"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
-    </div>
-    <div class="counter" id="ct-social" style="text-align:center;"></div>
-    <div class="dots" id="dt-social"></div>
-    <div class="config">
-      <div class="config-title">⚙ 社群圖文設定</div>
-      <div class="ap-row">
-        <label class="toggle"><input type="checkbox" id="ap-social" checked><div class="ttr"></div><div class="tth"></div></label>
-        自動輪播
-        <input type="number" id="api-social" value="5" min="1" max="60" style="width:44px;padding:4px 6px;border:1px solid var(--border-strong);border-radius:5px;font-size:12px;color:var(--text-main);">秒
-      </div>
-      <div class="upload-zone" id="uz-social">
-        <input type="file" accept="image/*" multiple id="uf-social">
-        <span>🌸</span>
-        <p>點擊或拖曳圖片，直接上傳至 Cloudinary</p>
-      </div>
-      <div class="upload-progress" id="uprog-social" style="display:none;">
-        <div class="progress-bar"><div class="progress-fill" id="pfill-social"></div></div>
-        <div class="progress-label" id="plabel-social"></div>
-      </div>
-      <div id="ul-social"></div>
-      <button class="btn-add" id="add-social">＋ 手動貼入網址</button><br>
-      <button class="btn-save" id="save-social">套用更新</button>
-      <p class="hint">上傳後網址自動填入。若需裁切比例可在網址加入 <code>/w_600,c_fill,ar_9:16/</code> 參數。</p>
-    </div>
-  </div>
-
-  <!-- Notion embed -->
-  <div class="embed-panel">
-    <div class="embed-title">📋 嵌入 Notion 的語法</div>
-    <div class="embed-row">
-      <label>頁面網址</label>
-      <input type="text" id="embed-url" placeholder="https://你的帳號.github.io/gallery/">
-    </div>
-    <div class="embed-row">
-      <label>寬度</label>
-      <input type="number" id="embed-w" value="100">
-      <select id="embed-wunit"><option value="%">%</option><option value="px">px</option></select>
-      <label style="margin-left:10px;">高度</label>
-      <input type="number" id="embed-h" value="800">
-      <span style="font-size:12px;color:var(--text-soft);">px</span>
-    </div>
-    <div class="code-box" id="embed-code"></div>
-    <button class="btn-copy" id="btn-copy">複製語法</button>
-    <span class="copy-ok" id="copy-ok">✓ 已複製！</span>
-    <p class="hint" style="margin-top:10px;">
-      在 Notion 頁面輸入 <code>/embed</code> → 貼上上方 iframe 語法，或直接貼網址也可以。<br>
-      建議高度設 700～1000px，依你的輪播內容調整。
-    </p>
   </div>
 </div>
 
 <script>
 const CLD_CLOUD  = 'dae2cqeid';
 const CLD_PRESET = 'portfolio';
+const BASE_URL   = location.origin + location.pathname.replace('index.html','');
+const EMBED_PAGE = BASE_URL + 'embed.html';
+const STORAGE_KEY = 'cld_albums';
 
-const DEFAULTS = {
-  photo: [
-    { url:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80', cap:'山巒之景' },
-    { url:'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&q=80', cap:'森林步道' },
-    { url:'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1200&q=80', cap:'高山湖泊' },
-  ],
-  social: [
-    { url:'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600&q=80', cap:'作品一' },
-    { url:'https://images.unsplash.com/photo-1611162616305-c69b3037c7bb?w=600&q=80', cap:'作品二' },
-    { url:'https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=600&q=80', cap:'作品三' },
-  ]
-};
+function nowFolder(label) {
+  if (label && label.trim()) return label.trim().replace(/\s+/g,'_');
+  const d = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`;
+}
 
-async function uploadToCloudinary(file, onProgress) {
+// local storage for album list
+function loadAlbums() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch { return []; }
+}
+function saveAlbums(list) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+}
+function addAlbum(folder, count, thumbUrl) {
+  const list = loadAlbums();
+  const exists = list.findIndex(a => a.folder === folder);
+  if (exists >= 0) {
+    list[exists].count += count;
+    if (thumbUrl) list[exists].thumb = thumbUrl;
+  } else {
+    list.unshift({ folder, count, thumb: thumbUrl || '', created: Date.now() });
+  }
+  saveAlbums(list);
+  renderAlbums();
+}
+
+function embedUrl(folder) { return `${EMBED_PAGE}?folder=${encodeURIComponent(folder)}`; }
+function iframeCode(folder) { return `<iframe src="${embedUrl(folder)}" width="100%" height="500" frameborder="0" allowfullscreen></iframe>`; }
+
+function renderAlbums() {
+  const grid = document.getElementById('album-grid');
+  const list = loadAlbums();
+  if (!list.length) {
+    grid.innerHTML = '<div class="empty-albums">上傳第一批照片後，相簿會顯示在這裡</div>';
+    return;
+  }
+  grid.innerHTML = '';
+  list.forEach(album => {
+    const card = document.createElement('div');
+    card.className = 'album-card';
+    card.innerHTML = `
+      <div class="album-thumb">
+        ${album.thumb ? `<img src="${album.thumb}" alt="" loading="lazy">` : '<div class="no-img">🌸</div>'}
+      </div>
+      <div class="album-info">
+        <div class="album-name">${album.folder}</div>
+        <div class="album-count">${album.count} 張圖片</div>
+        <div class="album-actions">
+          <button class="ab-btn ab-embed" data-folder="${album.folder}">取得語法</button>
+          <button class="ab-btn ab-open"  data-folder="${album.folder}">預覽</button>
+        </div>
+      </div>`;
+    card.querySelector('.ab-embed').addEventListener('click', e => {
+      e.stopPropagation();
+      showResult(album.folder);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    card.querySelector('.ab-open').addEventListener('click', e => {
+      e.stopPropagation();
+      window.open(embedUrl(album.folder), '_blank');
+    });
+    grid.appendChild(card);
+  });
+}
+
+function showResult(folder) {
+  const box = document.getElementById('result-box');
+  document.getElementById('res-folder').innerHTML = `相簿資料夾：<span>${folder}</span>`;
+  document.getElementById('res-iframe').textContent = iframeCode(folder);
+  document.getElementById('res-url').textContent = embedUrl(folder);
+  document.getElementById('btn-preview').onclick = () => window.open(embedUrl(folder), '_blank');
+  box.style.display = 'block';
+}
+
+// upload
+async function uploadFile(file, folder, onProgress) {
   const fd = new FormData();
   fd.append('file', file);
   fd.append('upload_preset', CLD_PRESET);
+  fd.append('folder', folder);
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLD_CLOUD}/image/upload`);
@@ -343,7 +293,7 @@ async function uploadToCloudinary(file, onProgress) {
     xhr.onload = () => {
       try {
         const r = JSON.parse(xhr.responseText);
-        if (r.secure_url) resolve(r.secure_url);
+        if (r.secure_url) resolve(r);
         else reject(new Error(r.error?.message || '上傳失敗'));
       } catch(e) { reject(e); }
     };
@@ -352,191 +302,67 @@ async function uploadToCloudinary(file, onProgress) {
   });
 }
 
-function initRatioBtns(id) {
-  const car = document.getElementById('car-' + id);
-  const btns = document.querySelectorAll(`#rbtn-${id} .rbtn`);
-  btns.forEach(btn => btn.addEventListener('click', () => {
-    btns.forEach(b => b.classList.remove('on'));
-    btn.classList.add('on');
-    // preserve current non-ratio classes
-    car.className = 'carousel ' + btn.dataset.r;
-  }));
-}
+async function handleUpload(files) {
+  if (!files.length) return;
+  const folder = nowFolder(document.getElementById('album-name').value);
+  const progWrap = document.getElementById('progress-wrap');
+  const progFill = document.getElementById('progress-fill');
+  const progLabel = document.getElementById('progress-label');
+  const resultBox = document.getElementById('result-box');
 
-function makeCarousel(id) {
-  const track     = document.getElementById('tr-' + id);
-  const dotsEl    = document.getElementById('dt-' + id);
-  const thumbsEl  = document.getElementById('th-' + id);
-  const counterEl = document.getElementById('ct-' + id);
-  const apToggle  = document.getElementById('ap-' + id);
-  const apInt     = document.getElementById('api-' + id);
-  const urlList   = document.getElementById('ul-' + id);
-  const uzEl      = document.getElementById('uz-' + id);
-  const ufEl      = document.getElementById('uf-' + id);
-  const uprogEl   = document.getElementById('uprog-' + id);
-  const pfillEl   = document.getElementById('pfill-' + id);
-  const plabelEl  = document.getElementById('plabel-' + id);
+  progWrap.style.display = 'block';
+  resultBox.style.display = 'none';
 
-  let images = [...DEFAULTS[id]];
-  let cur = 0, timer = null;
+  let done = 0, firstThumb = '';
+  const total = files.length;
 
-  function render() {
-    track.innerHTML = '';
-    dotsEl.innerHTML = '';
-    if (thumbsEl) thumbsEl.innerHTML = '';
-
-    if (!images.length) {
-      const empty = document.createElement('div');
-      empty.className = 'slide-empty';
-      empty.innerHTML = `<svg viewBox="0 0 24 24" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><p>尚未新增圖片</p>`;
-      track.appendChild(empty);
-      counterEl.textContent = '';
-      buildList(); return;
-    }
-
-    images.forEach((img, i) => {
-      const sl = document.createElement('div');
-      sl.className = 'slide';
-      sl.innerHTML = `<img src="${img.url}" alt="${img.cap||''}" loading="lazy">${img.cap?`<div class="caption">${img.cap}</div>`:''}`;
-      sl.addEventListener('click', () => go((cur+1)%images.length));
-      track.appendChild(sl);
-
-      const d = document.createElement('button');
-      d.className = 'dot'+(i===cur?' on':'');
-      d.addEventListener('click', ()=>go(i));
-      dotsEl.appendChild(d);
-
-      if (thumbsEl) {
-        const t = document.createElement('div');
-        t.className = 'thumb'+(i===cur?' on':'');
-        t.innerHTML = `<img src="${img.url}" alt="" loading="lazy">`;
-        t.addEventListener('click', ()=>go(i));
-        thumbsEl.appendChild(t);
-      }
-    });
-    updatePos(false); buildList(); startAuto();
-  }
-
-  function updatePos(anim=true) {
-    track.style.transition = anim ? 'transform 0.42s cubic-bezier(0.25,0.1,0.25,1)' : 'none';
-    track.style.transform = `translateX(-${cur*100}%)`;
-    dotsEl.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i===cur));
-    if (thumbsEl) thumbsEl.querySelectorAll('.thumb').forEach((t,i)=>t.classList.toggle('on',i===cur));
-    counterEl.textContent = images.length ? `${cur+1} / ${images.length}` : '';
-  }
-
-  function go(idx) {
-    cur = ((idx%images.length)+images.length)%images.length;
-    updatePos(); resetAuto();
-  }
-
-  function startAuto() {
-    clearInterval(timer);
-    if (!apToggle.checked || images.length<=1) return;
-    timer = setInterval(()=>go(cur+1), Math.max(1,parseInt(apInt.value)||5)*1000);
-  }
-  function resetAuto() { clearInterval(timer); startAuto(); }
-
-  apToggle.addEventListener('change', startAuto);
-  apInt.addEventListener('change', startAuto);
-  document.getElementById(id==='photo'?'pp':'sp').addEventListener('click',()=>go(cur-1));
-  document.getElementById(id==='photo'?'pn':'sn').addEventListener('click',()=>go(cur+1));
-
-  async function handleFiles(files) {
-    if (!files.length) return;
-    uprogEl.style.display = 'block';
-    let done = 0;
-    for (const file of files) {
-      plabelEl.textContent = `上傳中 ${done+1}/${files.length}：${file.name}`;
-      try {
-        const url = await uploadToCloudinary(file, p => {
-          pfillEl.style.width = ((done+p)/files.length*100).toFixed(0)+'%';
-        });
-        images.push({url, cap:''});
-        done++;
-        pfillEl.style.width = (done/files.length*100).toFixed(0)+'%';
-      } catch(e) {
-        plabelEl.textContent = `❌ 上傳失敗：${e.message}`;
-        await new Promise(r=>setTimeout(r,2000));
-      }
-    }
-    plabelEl.textContent = `✓ 完成！共上傳 ${done} 張`;
-    setTimeout(()=>{ uprogEl.style.display='none'; pfillEl.style.width='0%'; }, 2500);
-    cur = Math.max(0, images.length-done);
-    render();
-  }
-
-  ufEl.addEventListener('change', e=>handleFiles([...e.target.files]));
-  uzEl.addEventListener('dragover', e=>{e.preventDefault(); uzEl.classList.add('drag');});
-  uzEl.addEventListener('dragleave', ()=>uzEl.classList.remove('drag'));
-  uzEl.addEventListener('drop', e=>{
-    e.preventDefault(); uzEl.classList.remove('drag');
-    handleFiles([...e.dataTransfer.files].filter(f=>f.type.startsWith('image/')));
-  });
-
-  function buildList() {
-    urlList.innerHTML = '';
-    images.forEach((img,i)=>{
-      const row = document.createElement('div');
-      row.className = 'row';
-      row.innerHTML = `
-        <input type="text" name="url" placeholder="圖片網址" value="${img.url}">
-        <input type="text" name="cap" class="cap-in" placeholder="標題（選填）" value="${img.cap||''}">
-        <button class="btn-del" title="刪除">×</button>`;
-      row.querySelector('.btn-del').addEventListener('click',()=>{
-        images.splice(i,1);
-        if(cur>=images.length) cur=Math.max(0,images.length-1);
-        render();
+  for (const file of files) {
+    progLabel.textContent = `上傳中 ${done + 1} / ${total}：${file.name}`;
+    try {
+      const res = await uploadFile(file, folder, p => {
+        progFill.style.width = ((done + p) / total * 100).toFixed(0) + '%';
       });
-      urlList.appendChild(row);
-    });
+      if (!firstThumb) firstThumb = res.secure_url;
+      done++;
+      progFill.style.width = (done / total * 100).toFixed(0) + '%';
+    } catch(e) {
+      progLabel.textContent = `❌ ${file.name} 上傳失敗：${e.message}`;
+      await new Promise(r => setTimeout(r, 1500));
+    }
   }
 
-  document.getElementById('add-'+id).addEventListener('click',()=>{
-    images.push({url:'',cap:''});
-    buildList();
-    urlList.lastElementChild.querySelector('[name="url"]').focus();
-  });
+  progLabel.textContent = `✓ 完成！共上傳 ${done} 張`;
+  setTimeout(() => { progWrap.style.display = 'none'; progFill.style.width = '0%'; }, 2500);
 
-  document.getElementById('save-'+id).addEventListener('click',()=>{
-    images=[];
-    urlList.querySelectorAll('.row').forEach(row=>{
-      const url=row.querySelector('[name="url"]').value.trim();
-      const cap=row.querySelector('[name="cap"]').value.trim();
-      if(url) images.push({url,cap});
-    });
-    if(!images.length) images=[...DEFAULTS[id]];
-    cur=0; render();
-  });
-
-  render();
+  addAlbum(folder, done, firstThumb);
+  showResult(folder);
+  document.getElementById('album-name').value = '';
 }
 
-// embed generator
-function updateEmbedCode() {
-  const url = document.getElementById('embed-url').value || 'https://你的帳號.github.io/gallery/';
-  const w   = document.getElementById('embed-w').value || '100';
-  const wu  = document.getElementById('embed-wunit').value;
-  const h   = document.getElementById('embed-h').value || '800';
-  document.getElementById('embed-code').textContent =
-    `<iframe src="${url}" width="${w}${wu}" height="${h}" frameborder="0" allowfullscreen></iframe>`;
-}
-['embed-url','embed-w','embed-wunit','embed-h'].forEach(id=>
-  document.getElementById(id).addEventListener('input', updateEmbedCode)
-);
-document.getElementById('btn-copy').addEventListener('click',()=>{
-  navigator.clipboard.writeText(document.getElementById('embed-code').textContent).then(()=>{
-    const ok = document.getElementById('copy-ok');
-    ok.classList.add('show');
-    setTimeout(()=>ok.classList.remove('show'), 2000);
-  });
+// events
+const uz = document.getElementById('upload-zone');
+const fi = document.getElementById('file-input');
+fi.addEventListener('change', e => handleUpload([...e.target.files]));
+uz.addEventListener('dragover', e => { e.preventDefault(); uz.classList.add('drag'); });
+uz.addEventListener('dragleave', () => uz.classList.remove('drag'));
+uz.addEventListener('drop', e => {
+  e.preventDefault(); uz.classList.remove('drag');
+  handleUpload([...e.dataTransfer.files].filter(f => f.type.startsWith('image/')));
 });
 
-initRatioBtns('photo');
-initRatioBtns('social');
-makeCarousel('photo');
-makeCarousel('social');
-updateEmbedCode();
+function copyText(text, okId) {
+  navigator.clipboard.writeText(text).then(() => {
+    const el = document.getElementById(okId);
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 2000);
+  });
+}
+document.getElementById('btn-copy-iframe').addEventListener('click', () =>
+  copyText(document.getElementById('res-iframe').textContent, 'ok-iframe'));
+document.getElementById('btn-copy-url').addEventListener('click', () =>
+  copyText(document.getElementById('res-url').textContent, 'ok-url'));
+
+renderAlbums();
 </script>
 </body>
 </html>
