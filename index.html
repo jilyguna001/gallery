@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>作品集圖庫</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Helvetica Neue', 'Noto Sans TC', system-ui, sans-serif;
+  background: #ffffff;
+  color: #1a1a1a;
+  padding: 20px 16px 32px;
+}
+
+/* ── Section titles ── */
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #999;
+  margin-bottom: 10px;
+}
+
+.section + .section { margin-top: 32px; }
+
+/* ── Carousel shell ── */
+.carousel {
+  position: relative;
+  width: 100%;
+  background: #f0f0f0;
+  border-radius: 10px;
+  overflow: hidden;
+  user-select: none;
+}
+
+.carousel.ratio-43  { aspect-ratio: 4/3; }
+.carousel.ratio-916 {
+  /* 9:16 shown as a centred narrow column */
+  max-width: 340px;
+  margin: 0 auto;
+  aspect-ratio: 9/16;
+  border-radius: 14px;
+}
+
+.track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.42s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.slide {
+  min-width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+  pointer-events: none;
+}
+
+.slide:hover img { transform: scale(1.03); }
+
+.caption {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 2.5rem 1.2rem 1rem;
+  background: linear-gradient(transparent, rgba(0,0,0,0.55));
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0;
+  transition: opacity 0.25s;
+  pointer-events: none;
+}
+.slide:hover .caption { opacity: 1; }
+
+/* ── Nav buttons ── */
+.nav {
+  position: absolute;
+  top: 50%; transform: translateY(-50%);
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,0.88);
+  border: none; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; z-index: 10;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.18);
+  transition: background 0.15s, transform 0.15s;
+}
+.nav:hover { background: #fff; transform: translateY(-50%) scale(1.08); }
+.nav.prev { left: 10px; }
+.nav.next { right: 10px; }
+.nav svg { width: 18px; height: 18px; stroke: #333; fill: none; stroke-width: 2; }
+
+/* ── Dots ── */
+.dots {
+  display: flex; justify-content: center;
+  gap: 7px; padding: 10px 0 4px;
+}
+.dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #d0d0d0;
+  border: none; padding: 0; cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+.dot.on { background: #333; transform: scale(1.3); }
+
+/* ── Thumbnails (4:3 only) ── */
+.thumbs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
+  gap: 5px;
+  margin-top: 8px;
+}
+.thumb {
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  opacity: 0.6;
+  transition: opacity 0.2s, border-color 0.2s;
+}
+.thumb.on { opacity: 1; border-color: #333; }
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.counter {
+  text-align: right;
+  font-size: 12px;
+  color: #aaa;
+  padding: 4px 2px 0;
+}
+
+/* ── Config panel ── */
+.config {
+  margin-top: 14px;
+  border: 1px dashed #e0e0e0;
+  border-radius: 8px;
+  padding: 14px 16px;
+  background: #fafafa;
+}
+.config-title {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: #888; margin-bottom: 11px;
+}
+.row {
+  display: flex; gap: 7px; align-items: center; margin-bottom: 7px;
+}
+.row input[type="text"] {
+  flex: 1; padding: 6px 9px;
+  border: 1px solid #e0e0e0; border-radius: 6px;
+  font-size: 12px; background: #fff; outline: none;
+  transition: border-color 0.15s;
+}
+.row input[type="text"]:focus { border-color: #888; }
+.cap-input { flex: 0 0 120px !important; }
+.btn-del {
+  flex-shrink: 0; width: 28px; height: 28px;
+  background: #fff; border: 1px solid #e0e0e0; border-radius: 6px;
+  cursor: pointer; font-size: 15px; color: #bbb; display: flex;
+  align-items: center; justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+.btn-del:hover { background: #fff0f0; color: #c33; border-color: #fcc; }
+.btn-add {
+  padding: 6px 12px; background: #fff;
+  border: 1px dashed #ccc; border-radius: 6px;
+  font-size: 12px; color: #666; cursor: pointer; margin-bottom: 10px;
+  transition: background 0.15s;
+}
+.btn-add:hover { background: #f2f2f2; }
+.btn-save {
+  padding: 7px 16px; background: #222; color: #fff;
+  border: none; border-radius: 6px; font-size: 12px;
+  cursor: pointer; transition: background 0.15s;
+}
+.btn-save:hover { background: #000; }
+.hint {
+  font-size: 11px; color: #bbb; margin-top: 8px; line-height: 1.6;
+}
+.hint a { color: #888; }
+
+/* ── Auto-play toggle ── */
+.ap-row {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; color: #666; margin-bottom: 10px;
+}
+.toggle { position: relative; width: 34px; height: 19px; cursor: pointer; }
+.toggle input { display: none; }
+.tr { position: absolute; inset: 0; background: #ccc; border-radius: 20px; transition: background 0.2s; }
+.toggle input:checked + .tr { background: #444; }
+.th {
+  position: absolute; top: 2.5px; left: 2.5px;
+  width: 14px; height: 14px; background: #fff; border-radius: 50%;
+  transition: left 0.2s;
+}
+.toggle input:checked ~ .th { left: 17.5px; }
+
+@media (max-width: 480px) {
+  .cap-input { flex: 1 !important; min-width: 0; }
+  .row { flex-wrap: wrap; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ SECTION 1: 攝影作品 4:3 ═══════════════ -->
+<div class="section" id="sec-photo">
+  <div class="section-label">攝影作品</div>
+  <div class="carousel ratio-43" id="car-photo">
+    <div class="track" id="tr-photo"></div>
+    <button class="nav prev" id="pp"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <button class="nav next" id="pn"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+  </div>
+  <div class="counter" id="ct-photo"></div>
+  <div class="dots" id="dt-photo"></div>
+  <div class="thumbs" id="th-photo"></div>
+
+  <div class="config" id="cfg-photo">
+    <div class="config-title">&#9881; 攝影作品設定</div>
+    <div class="ap-row">
+      <label class="toggle"><input type="checkbox" id="ap-photo" checked><div class="tr"></div><div class="th"></div></label>
+      自動輪播
+      <input type="number" id="api-photo" value="5" min="1" max="60" style="width:46px;padding:4px 6px;border:1px solid #e0e0e0;border-radius:5px;font-size:12px;">秒
+    </div>
+    <div id="ul-photo"></div>
+    <button class="btn-add" id="add-photo">＋ 新增圖片</button><br>
+    <button class="btn-save" id="save-photo">套用</button>
+    <p class="hint">貼上 Cloudinary 圖片網址，建議使用 <code>w_1200,c_fill,ar_4:3</code> 轉換參數。</p>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 2: 社群圖文 9:16 ═══════════════ -->
+<div class="section" id="sec-social">
+  <div class="section-label">社群圖文</div>
+  <div class="carousel ratio-916" id="car-social">
+    <div class="track" id="tr-social"></div>
+    <button class="nav prev" id="sp"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <button class="nav next" id="sn"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+  </div>
+  <div class="counter" id="ct-social" style="text-align:center;"></div>
+  <div class="dots" id="dt-social"></div>
+
+  <div class="config" id="cfg-social">
+    <div class="config-title">&#9881; 社群圖文設定</div>
+    <div class="ap-row">
+      <label class="toggle"><input type="checkbox" id="ap-social" checked><div class="tr"></div><div class="th"></div></label>
+      自動輪播
+      <input type="number" id="api-social" value="5" min="1" max="60" style="width:46px;padding:4px 6px;border:1px solid #e0e0e0;border-radius:5px;font-size:12px;">秒
+    </div>
+    <div id="ul-social"></div>
+    <button class="btn-add" id="add-social">＋ 新增圖片</button><br>
+    <button class="btn-save" id="save-social">套用</button>
+    <p class="hint">貼上 Cloudinary 圖片網址，建議使用 <code>w_600,c_fill,ar_9:16</code> 轉換參數。</p>
+  </div>
+</div>
+
+<script>
+// ── Default images ──
+const DEFAULTS = {
+  photo: [
+    { url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80', cap: '山巒之景' },
+    { url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&q=80', cap: '森林步道' },
+    { url: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1200&q=80', cap: '高山湖泊' },
+  ],
+  social: [
+    { url: 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600&q=80', cap: '作品一' },
+    { url: 'https://images.unsplash.com/photo-1611162616305-c69b3037c7bb?w=600&q=80', cap: '作品二' },
+    { url: 'https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=600&q=80', cap: '作品三' },
+  ]
+};
+
+// ── Carousel factory ──
+function makeCarousel(id) {
+  const track   = document.getElementById('tr-' + id);
+  const dotsEl  = document.getElementById('dt-' + id);
+  const thumbsEl= document.getElementById('th-' + id);  // null for social
+  const counterEl = document.getElementById('ct-' + id);
+  const apToggle  = document.getElementById('ap-' + id);
+  const apInterval= document.getElementById('api-' + id);
+  const urlList   = document.getElementById('ul-' + id);
+
+  let images = [...DEFAULTS[id]];
+  let cur = 0, timer = null;
+
+  function render() {
+    track.innerHTML = '';
+    dotsEl.innerHTML = '';
+    if (thumbsEl) thumbsEl.innerHTML = '';
+
+    images.forEach((img, i) => {
+      // slide
+      const sl = document.createElement('div');
+      sl.className = 'slide';
+      sl.innerHTML = `<img src="${img.url}" alt="${img.cap||''}" loading="lazy">${img.cap ? `<div class="caption">${img.cap}</div>` : ''}`;
+      sl.addEventListener('click', () => go((cur + 1) % images.length));
+      track.appendChild(sl);
+
+      // dot
+      const d = document.createElement('button');
+      d.className = 'dot' + (i===cur?' on':'');
+      d.addEventListener('click', () => go(i));
+      dotsEl.appendChild(d);
+
+      // thumb (photo only)
+      if (thumbsEl) {
+        const t = document.createElement('div');
+        t.className = 'thumb' + (i===cur?' on':'');
+        t.innerHTML = `<img src="${img.url}" alt="" loading="lazy">`;
+        t.addEventListener('click', () => go(i));
+        thumbsEl.appendChild(t);
+      }
+    });
+
+    updatePos(false);
+    buildList();
+    startAuto();
+  }
+
+  function updatePos(anim=true) {
+    track.style.transition = anim ? 'transform 0.42s cubic-bezier(0.25,0.1,0.25,1)' : 'none';
+    track.style.transform = `translateX(-${cur*100}%)`;
+    dotsEl.querySelectorAll('.dot').forEach((d,i) => d.classList.toggle('on', i===cur));
+    if (thumbsEl) thumbsEl.querySelectorAll('.thumb').forEach((t,i) => t.classList.toggle('on', i===cur));
+    counterEl.textContent = images.length ? `${cur+1} / ${images.length}` : '';
+  }
+
+  function go(idx) {
+    cur = ((idx % images.length) + images.length) % images.length;
+    updatePos();
+    resetAuto();
+  }
+
+  function startAuto() {
+    clearInterval(timer);
+    if (!apToggle.checked || images.length <= 1) return;
+    const ms = Math.max(1, parseInt(apInterval.value)||5) * 1000;
+    timer = setInterval(() => go(cur + 1), ms);
+  }
+  function resetAuto() { clearInterval(timer); startAuto(); }
+
+  apToggle.addEventListener('change', startAuto);
+  apInterval.addEventListener('change', startAuto);
+
+  document.getElementById(id==='photo'?'pp':'sp').addEventListener('click', () => go(cur-1));
+  document.getElementById(id==='photo'?'pn':'sn').addEventListener('click', () => go(cur+1));
+
+  function buildList() {
+    urlList.innerHTML = '';
+    images.forEach((img, i) => {
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.innerHTML = `
+        <input type="text" name="url" placeholder="Cloudinary 圖片網址" value="${img.url}">
+        <input type="text" name="cap" class="cap-input" placeholder="標題（選填）" value="${img.cap||''}">
+        <button class="btn-del" title="刪除">×</button>`;
+      row.querySelector('.btn-del').addEventListener('click', () => {
+        images.splice(i, 1);
+        if (cur >= images.length) cur = Math.max(0, images.length-1);
+        render();
+      });
+      urlList.appendChild(row);
+    });
+  }
+
+  document.getElementById('add-' + id).addEventListener('click', () => {
+    images.push({ url: '', cap: '' });
+    buildList();
+    urlList.lastElementChild.querySelector('input[name="url"]').focus();
+  });
+
+  document.getElementById('save-' + id).addEventListener('click', () => {
+    images = [];
+    urlList.querySelectorAll('.row').forEach(row => {
+      const url = row.querySelector('[name="url"]').value.trim();
+      const cap = row.querySelector('[name="cap"]').value.trim();
+      if (url) images.push({ url, cap });
+    });
+    if (!images.length) images = [...DEFAULTS[id]];
+    cur = 0;
+    render();
+  });
+
+  render();
+}
+
+// ── Keyboard nav ──
+document.addEventListener('keydown', e => {
+  if (e.key==='ArrowLeft') document.getElementById('pp').click(), document.getElementById('sp').click();
+  if (e.key==='ArrowRight') document.getElementById('pn').click(), document.getElementById('sn').click();
+});
+
+makeCarousel('photo');
+makeCarousel('social');
+</script>
+</body>
+</html>
