@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>作品集管理</title>
+<title>Notion 輪播小工具</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -40,15 +40,24 @@ body {
 .card-title{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-soft);margin-bottom:16px;display:flex;align-items:center;gap:6px}
 .card-title::before{content:'';display:inline-block;width:14px;height:2px;background:var(--pink-3);border-radius:2px}
 
-/* token setup */
-.token-setup{background:var(--pink-0);border:1px solid var(--border-s);border-radius:var(--rs);padding:16px 18px;margin-bottom:16px}
-.token-setup.ok{background:#f0fdf4;border-color:rgba(74,222,128,.4)}
-.token-row{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
-.token-row input{flex:1;min-width:0;padding:8px 11px;border:1px solid var(--border-s);border-radius:var(--rs);font-size:12px;background:#fff;color:var(--text-main);outline:none;font-family:monospace;transition:border-color .15s}
-.token-row input:focus{border-color:var(--pink-3)}
-.token-status{font-size:13px;font-weight:500;color:var(--text-mid)}
-.token-status.ok{color:#16a34a}
-.token-hint{font-size:11px;color:var(--text-soft);margin-top:6px;line-height:1.6}
+.setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+@media(max-width:520px){.setup-grid{grid-template-columns:1fr}}
+
+.setup-field label{display:block;font-size:11px;font-weight:600;color:var(--text-mid);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em}
+.setup-field input{width:100%;padding:8px 10px;border:1px solid var(--border-s);border-radius:var(--rs);font-size:12px;background:#fff;color:var(--text-main);outline:none;transition:border-color .15s;font-family:monospace}
+.setup-field input:focus{border-color:var(--pink-3)}
+.setup-field .sf-hint{font-size:10px;color:var(--text-soft);margin-top:3px}
+
+.setup-status{font-size:13px;font-weight:500;color:var(--text-mid);margin-bottom:10px}
+.setup-status.ok{color:#16a34a}
+.setup-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn-primary{padding:7px 18px;background:linear-gradient(135deg,var(--pink-3),var(--pink-4));color:#fff;border:none;border-radius:6px;font-size:12px;cursor:pointer;box-shadow:0 2px 8px rgba(230,73,128,.2);transition:opacity .15s}
+.btn-primary:hover{opacity:.85}
+.btn-ghost{padding:7px 14px;background:#fff;border:1px solid var(--border-s);border-radius:6px;font-size:12px;cursor:pointer;color:var(--text-mid);transition:opacity .15s}
+.btn-ghost:hover{opacity:.8}
+.setup-hint{font-size:11px;color:var(--text-soft);margin-top:10px;line-height:1.7;padding:10px 12px;background:var(--pink-0);border-radius:var(--rs)}
+.setup-hint a{color:var(--pink-4);text-decoration:none}
+.setup-hint a:hover{text-decoration:underline}
 
 .field{margin-bottom:14px}
 .field label{display:block;font-size:12px;color:var(--text-mid);margin-bottom:5px}
@@ -77,10 +86,6 @@ body {
 .code-label{font-size:11px;color:var(--text-soft);margin-bottom:4px}
 .code-box{background:#fff;border:1px solid var(--border);border-radius:6px;padding:9px 11px;font-family:monospace;font-size:11px;color:var(--text-mid);word-break:break-all;line-height:1.6;user-select:all}
 .btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
-.btn-copy,.btn-open,.btn-save-token,.btn-clear-token{padding:7px 16px;border-radius:6px;font-size:12px;cursor:pointer;transition:opacity .15s;border:none}
-.btn-copy,.btn-save-token{background:linear-gradient(135deg,var(--pink-3),var(--pink-4));color:#fff;box-shadow:0 2px 8px rgba(230,73,128,.2)}
-.btn-open,.btn-clear-token{background:#fff;border:1px solid var(--border-s) !important;color:var(--text-mid)}
-.btn-copy:hover,.btn-open:hover,.btn-save-token:hover,.btn-clear-token:hover{opacity:.82}
 .copy-ok{font-size:11px;color:#40c057;opacity:0;transition:opacity .3s;display:inline-block}
 .copy-ok.show{opacity:1}
 
@@ -110,22 +115,51 @@ body {
   <div class="petal"></div>
 </div>
 <div class="wrap">
-  <p class="page-title">🌸 作品集管理</p>
+  <p class="page-title">🌸 Notion 輪播小工具</p>
   <p class="page-sub">上傳即建立相簿，一鍵取得 Notion 嵌入語法</p>
 
-  <!-- Token 設定 -->
+  <!-- 設定區 -->
   <div class="card">
-    <div class="card-title">GitHub 權限設定</div>
-    <div class="token-setup" id="token-setup">
-      <div class="token-status" id="token-status">尚未設定 GitHub Token</div>
-      <div class="token-row">
-        <input type="password" id="token-input" placeholder="貼上你的 GitHub Fine-grained Token">
-        <button class="btn-save-token" id="btn-save-token">儲存</button>
-        <button class="btn-clear-token" id="btn-clear-token" style="display:none">清除</button>
+    <div class="card-title">帳號設定</div>
+    <div class="setup-status" id="setup-status">尚未完成設定</div>
+
+    <div id="setup-form">
+      <div class="setup-grid">
+        <div class="setup-field">
+          <label>Cloudinary Cloud Name</label>
+          <input type="text" id="cld-cloud" placeholder="例：my-cloud-name">
+          <div class="sf-hint">Cloudinary 後台右上角顯示</div>
+        </div>
+        <div class="setup-field">
+          <label>Cloudinary Upload Preset</label>
+          <input type="text" id="cld-preset" placeholder="例：portfolio">
+          <div class="sf-hint">Settings → Upload → Upload presets（需為 Unsigned）</div>
+        </div>
+        <div class="setup-field">
+          <label>GitHub 帳號名稱</label>
+          <input type="text" id="gh-owner" placeholder="例：your-username">
+          <div class="sf-hint">你的 GitHub 用戶名</div>
+        </div>
+        <div class="setup-field">
+          <label>GitHub 倉庫名稱</label>
+          <input type="text" id="gh-repo" placeholder="例：gallery">
+          <div class="sf-hint">存放相簿 JSON 的倉庫</div>
+        </div>
       </div>
-      <div class="token-hint">
-        Token 只存在你這台電腦的瀏覽器裡，不會出現在程式碼或 GitHub 上。<br>
-        換電腦或清除瀏覽器資料後需要重新輸入。
+      <div class="setup-field" style="margin-bottom:12px">
+        <label>GitHub Token</label>
+        <input type="password" id="gh-token" placeholder="github_pat_...">
+        <div class="sf-hint">Fine-grained token，Contents 需有 Read and write 權限</div>
+      </div>
+      <div class="setup-actions">
+        <button class="btn-primary" id="btn-save-setup">儲存設定</button>
+        <button class="btn-ghost" id="btn-clear-setup" style="display:none">清除重設</button>
+        <span class="copy-ok" id="ok-setup">✓ 已儲存</span>
+      </div>
+      <div class="setup-hint">
+        所有設定只存在你的瀏覽器，不會出現在程式碼裡。<br>
+        Cloudinary 免費申請：<a href="https://cloudinary.com" target="_blank">cloudinary.com</a>　
+        GitHub Token：Settings → Developer settings → Fine-grained tokens
       </div>
     </div>
   </div>
@@ -142,7 +176,7 @@ body {
       <input type="file" accept="image/*" multiple id="file-input" disabled>
       <div class="uz-icon">🌸</div>
       <div class="uz-main">點擊或拖曳圖片到這裡</div>
-      <div class="uz-sub" id="uz-sub">請先設定 GitHub Token</div>
+      <div class="uz-sub" id="uz-sub">請先完成帳號設定</div>
     </div>
     <div class="progress-wrap" id="progress-wrap">
       <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
@@ -160,11 +194,11 @@ body {
         <div class="code-box" id="res-url"></div>
       </div>
       <div class="btn-row">
-        <button class="btn-copy" id="btn-copy-iframe">複製 iframe</button>
+        <button class="btn-primary" id="btn-copy-iframe">複製 iframe</button>
         <span class="copy-ok" id="ok-iframe">✓ 已複製</span>
-        <button class="btn-copy" id="btn-copy-url">複製連結</button>
+        <button class="btn-primary" id="btn-copy-url">複製連結</button>
         <span class="copy-ok" id="ok-url">✓ 已複製</span>
-        <button class="btn-open" id="btn-preview">預覽輪播</button>
+        <button class="btn-ghost" id="btn-preview">預覽輪播</button>
       </div>
     </div>
   </div>
@@ -173,27 +207,24 @@ body {
   <div class="card">
     <div class="card-title">我的相簿</div>
     <div class="album-grid" id="album-grid">
-      <div class="empty-albums">設定 Token 後載入相簿列表</div>
+      <div class="empty-albums">完成設定後載入相簿列表</div>
     </div>
   </div>
 </div>
 
 <script>
-const CLD_CLOUD  = 'dae2cqeid';
-const CLD_PRESET = 'portfolio';
-const GH_OWNER   = 'jilyguna001';
-const GH_REPO    = 'gallery';
-const GH_BRANCH  = 'main';
-const TOKEN_KEY  = 'gh_gallery_token';
-const BASE_URL   = 'https://jilyguna001.github.io/gallery/';
-const EMBED_PAGE = BASE_URL + 'embed.html';
-const ALBUMS_IDX = 'albums/index.json';
+const KEYS = {
+  cldCloud:  'gw_cld_cloud',
+  cldPreset: 'gw_cld_preset',
+  ghOwner:   'gw_gh_owner',
+  ghRepo:    'gw_gh_repo',
+  ghToken:   'gw_gh_token',
+};
 
-function getToken()      { return localStorage.getItem(TOKEN_KEY) || ''; }
-function saveToken(t)    { localStorage.setItem(TOKEN_KEY, t); }
-function clearToken()    { localStorage.removeItem(TOKEN_KEY); }
-
-function embedUrl(f)   { return `${EMBED_PAGE}?folder=${encodeURIComponent(f)}`; }
+function cfg(key)      { return localStorage.getItem(KEYS[key]) || ''; }
+function isReady()     { return ['cldCloud','cldPreset','ghOwner','ghRepo','ghToken'].every(k => cfg(k)); }
+function embedBase()   { return `https://${cfg('ghOwner')}.github.io/${cfg('ghRepo')}/embed.html`; }
+function embedUrl(f)   { return `${embedBase()}?folder=${encodeURIComponent(f)}`; }
 function iframeCode(f) { return `<iframe src="${embedUrl(f)}" width="100%" height="500" frameborder="0" allowfullscreen></iframe>`; }
 
 function nowFolder(label) {
@@ -202,66 +233,88 @@ function nowFolder(label) {
   return `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`;
 }
 
-// ── Token UI ──────────────────────────────────────────
-function refreshTokenUI() {
-  const token = getToken();
-  const setup  = document.getElementById('token-setup');
-  const status = document.getElementById('token-status');
-  const input  = document.getElementById('token-input');
-  const btnClear = document.getElementById('btn-clear-token');
-  const uz     = document.getElementById('upload-zone');
-  const fi     = document.getElementById('file-input');
-  const uzSub  = document.getElementById('uz-sub');
+// ── Setup UI ──────────────────────────────────────────
+function refreshSetupUI() {
+  const ready = isReady();
+  const status   = document.getElementById('setup-status');
+  const btnClear = document.getElementById('btn-clear-setup');
+  const form     = document.getElementById('setup-form');
+  const uz       = document.getElementById('upload-zone');
+  const fi       = document.getElementById('file-input');
+  const uzSub    = document.getElementById('uz-sub');
 
-  if (token) {
-    setup.classList.add('ok');
-    status.classList.add('ok');
-    status.textContent = '✓ Token 已設定（存於本機瀏覽器）';
-    input.style.display = 'none';
+  if (ready) {
+    status.className = 'setup-status ok';
+    status.textContent = `✓ 已設定：${cfg('ghOwner')}/${cfg('ghRepo')} × ${cfg('cldCloud')}`;
     btnClear.style.display = '';
-    uz.classList.remove('disabled');
-    fi.disabled = false;
+    // collapse inputs but keep form visible for clear button
+    ['cld-cloud','cld-preset','gh-owner','gh-repo','gh-token'].forEach(id => {
+      const el = document.getElementById(id);
+      el.value = '';
+      el.closest('.setup-field, div').style.display = 'none';
+    });
+    document.querySelector('.setup-grid').style.display = 'none';
+    document.querySelector('.setup-hint').style.display = 'none';
+    document.getElementById('btn-save-setup').style.display = 'none';
+    uz.classList.remove('disabled'); fi.disabled = false;
     uzSub.textContent = '支援 JPG、PNG、WebP，可多選';
     renderAlbums();
   } else {
-    setup.classList.remove('ok');
-    status.classList.remove('ok');
-    status.textContent = '尚未設定 GitHub Token';
-    input.style.display = '';
+    status.className = 'setup-status';
+    status.textContent = '尚未完成設定';
     btnClear.style.display = 'none';
-    uz.classList.add('disabled');
-    fi.disabled = true;
-    uzSub.textContent = '請先設定 GitHub Token';
-    document.getElementById('album-grid').innerHTML = '<div class="empty-albums">設定 Token 後載入相簿列表</div>';
+    document.querySelector('.setup-grid').style.display = '';
+    document.querySelector('.setup-hint').style.display = '';
+    document.getElementById('btn-save-setup').style.display = '';
+    uz.classList.add('disabled'); fi.disabled = true;
+    uzSub.textContent = '請先完成帳號設定';
+    document.getElementById('album-grid').innerHTML = '<div class="empty-albums">完成設定後載入相簿列表</div>';
   }
 }
 
-document.getElementById('btn-save-token').addEventListener('click', () => {
-  const val = document.getElementById('token-input').value.trim();
-  if (!val) return;
-  saveToken(val);
-  document.getElementById('token-input').value = '';
-  refreshTokenUI();
+document.getElementById('btn-save-setup').addEventListener('click', () => {
+  const vals = {
+    cldCloud:  document.getElementById('cld-cloud').value.trim(),
+    cldPreset: document.getElementById('cld-preset').value.trim(),
+    ghOwner:   document.getElementById('gh-owner').value.trim(),
+    ghRepo:    document.getElementById('gh-repo').value.trim(),
+    ghToken:   document.getElementById('gh-token').value.trim(),
+  };
+  if (!Object.values(vals).every(Boolean)) {
+    alert('請填寫所有欄位'); return;
+  }
+  Object.entries(vals).forEach(([k,v]) => localStorage.setItem(KEYS[k], v));
+  const ok = document.getElementById('ok-setup');
+  ok.classList.add('show'); setTimeout(()=>ok.classList.remove('show'),2000);
+  refreshSetupUI();
 });
-document.getElementById('btn-clear-token').addEventListener('click', () => {
-  clearToken(); refreshTokenUI();
+
+document.getElementById('btn-clear-setup').addEventListener('click', () => {
+  if (!confirm('清除所有設定？')) return;
+  Object.values(KEYS).forEach(k => localStorage.removeItem(k));
+  // restore hidden elements
+  ['cld-cloud','cld-preset','gh-owner','gh-repo','gh-token'].forEach(id => {
+    const el = document.getElementById(id);
+    el.closest('.setup-field, div').style.display = '';
+  });
+  refreshSetupUI();
 });
 
 // ── GitHub API ────────────────────────────────────────
 async function ghGet(path) {
-  const r = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`, {
-    headers: { Authorization: `Bearer ${getToken()}`, Accept: 'application/vnd.github+json' }
+  const r = await fetch(`https://api.github.com/repos/${cfg('ghOwner')}/${cfg('ghRepo')}/contents/${path}`, {
+    headers: { Authorization: `Bearer ${cfg('ghToken')}`, Accept: 'application/vnd.github+json' }
   });
   if (r.status === 404) return null;
   if (!r.ok) throw new Error(`GitHub 讀取失敗 (${r.status})`);
   return r.json();
 }
 async function ghPut(path, content, message, sha) {
-  const body = { message, content: btoa(unescape(encodeURIComponent(content))), branch: GH_BRANCH };
+  const body = { message, content: btoa(unescape(encodeURIComponent(content))), branch: 'main' };
   if (sha) body.sha = sha;
-  const r = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`, {
+  const r = await fetch(`https://api.github.com/repos/${cfg('ghOwner')}/${cfg('ghRepo')}/contents/${path}`, {
     method: 'PUT',
-    headers: { Authorization: `Bearer ${getToken()}`, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
+    headers: { Authorization: `Bearer ${cfg('ghToken')}`, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   });
   if (!r.ok) { const e = await r.json(); throw new Error(e.message || `GitHub 寫入失敗 (${r.status})`); }
@@ -274,7 +327,7 @@ async function saveAlbumToGitHub(folder, urls, thumb) {
   const existing  = await ghGet(albumPath);
   await ghPut(albumPath, albumData, `Add album: ${folder}`, existing?.sha);
 
-  const indexFile = await ghGet(ALBUMS_IDX);
+  const indexFile = await ghGet('albums/index.json');
   let index = [];
   if (indexFile) {
     try { index = JSON.parse(decodeURIComponent(escape(atob(indexFile.content.replace(/\n/g,''))))); } catch {}
@@ -282,11 +335,11 @@ async function saveAlbumToGitHub(folder, urls, thumb) {
   const idx   = index.findIndex(a => a.folder === folder);
   const entry = { folder, count: urls.length, thumb, created: new Date().toISOString() };
   if (idx >= 0) index[idx] = entry; else index.unshift(entry);
-  await ghPut(ALBUMS_IDX, JSON.stringify(index, null, 2), `Update index: ${folder}`, indexFile?.sha);
+  await ghPut('albums/index.json', JSON.stringify(index, null, 2), `Update index: ${folder}`, indexFile?.sha);
 }
 
 async function loadAlbumsFromGitHub() {
-  const f = await ghGet(ALBUMS_IDX);
+  const f = await ghGet('albums/index.json');
   if (!f) return [];
   try { return JSON.parse(decodeURIComponent(escape(atob(f.content.replace(/\n/g,''))))); } catch { return []; }
 }
@@ -295,11 +348,11 @@ async function loadAlbumsFromGitHub() {
 async function uploadFile(file, folder, onProgress) {
   const fd = new FormData();
   fd.append('file', file);
-  fd.append('upload_preset', CLD_PRESET);
+  fd.append('upload_preset', cfg('cldPreset'));
   fd.append('folder', folder);
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLD_CLOUD}/image/upload`);
+    xhr.open('POST', `https://api.cloudinary.com/v1_1/${cfg('cldCloud')}/image/upload`);
     xhr.upload.onprogress = e => { if (e.lengthComputable) onProgress(e.loaded/e.total); };
     xhr.onload = () => {
       try {
@@ -315,7 +368,7 @@ async function uploadFile(file, folder, onProgress) {
 
 // ── Upload handler ────────────────────────────────────
 async function handleUpload(files) {
-  if (!files.length || !getToken()) return;
+  if (!files.length || !isReady()) return;
   const folder    = nowFolder(document.getElementById('album-name').value);
   const progWrap  = document.getElementById('progress-wrap');
   const progFill  = document.getElementById('progress-fill');
@@ -323,65 +376,53 @@ async function handleUpload(files) {
   progWrap.style.display = 'block';
   document.getElementById('result-box').style.display = 'none';
 
-  const urls = []; let firstThumb = '', done = 0;
+  const urls = []; let firstThumb='', done=0;
   for (const file of files) {
     progLabel.textContent = `上傳圖片 ${done+1}/${files.length}：${file.name}`;
     try {
       const res = await uploadFile(file, folder, p => {
         progFill.style.width = ((done+p)/files.length*100).toFixed(0)+'%';
       });
-      urls.push(res.secure_url);
-      if (!firstThumb) firstThumb = res.secure_url;
-      done++;
-      progFill.style.width = (done/files.length*100).toFixed(0)+'%';
+      urls.push(res.secure_url); if (!firstThumb) firstThumb=res.secure_url;
+      done++; progFill.style.width=(done/files.length*100).toFixed(0)+'%';
     } catch(e) {
-      progLabel.textContent = `❌ ${file.name}：${e.message}`;
+      progLabel.textContent=`❌ ${file.name}：${e.message}`;
       await new Promise(r=>setTimeout(r,1500));
     }
   }
-
   if (urls.length) {
-    progLabel.textContent = '儲存相簿資料到 GitHub…';
-    try {
-      await saveAlbumToGitHub(folder, urls, firstThumb);
-      progLabel.textContent = `✓ 完成！共上傳 ${done} 張`;
-    } catch(e) {
-      progLabel.textContent = `⚠️ 圖片上傳成功，但儲存失敗：${e.message}`;
-    }
+    progLabel.textContent='儲存相簿資料到 GitHub…';
+    try { await saveAlbumToGitHub(folder,urls,firstThumb); progLabel.textContent=`✓ 完成！共上傳 ${done} 張`; }
+    catch(e) { progLabel.textContent=`⚠️ 圖片上傳成功，但儲存失敗：${e.message}`; }
   }
-
-  setTimeout(() => { progWrap.style.display='none'; progFill.style.width='0%'; }, 2500);
+  setTimeout(()=>{ progWrap.style.display='none'; progFill.style.width='0%'; },2500);
   showResult(folder);
-  document.getElementById('album-name').value = '';
+  document.getElementById('album-name').value='';
   await renderAlbums();
 }
 
 // ── UI helpers ────────────────────────────────────────
 function showResult(folder) {
-  const box = document.getElementById('result-box');
-  document.getElementById('res-folder').innerHTML = `相簿資料夾：<span>${folder}</span>`;
-  document.getElementById('res-iframe').textContent = iframeCode(folder);
-  document.getElementById('res-url').textContent    = embedUrl(folder);
-  document.getElementById('btn-preview').onclick    = () => window.open(embedUrl(folder),'_blank');
-  box.style.display = 'block';
+  const box=document.getElementById('result-box');
+  document.getElementById('res-folder').innerHTML=`相簿資料夾：<span>${folder}</span>`;
+  document.getElementById('res-iframe').textContent=iframeCode(folder);
+  document.getElementById('res-url').textContent=embedUrl(folder);
+  document.getElementById('btn-preview').onclick=()=>window.open(embedUrl(folder),'_blank');
+  box.style.display='block';
 }
 
 async function renderAlbums() {
-  const grid = document.getElementById('album-grid');
-  grid.innerHTML = '<div class="empty-albums">載入中…</div>';
+  const grid=document.getElementById('album-grid');
+  grid.innerHTML='<div class="empty-albums">載入中…</div>';
   try {
-    const list = await loadAlbumsFromGitHub();
-    if (!list.length) {
-      grid.innerHTML = '<div class="empty-albums">上傳第一批照片後，相簿會顯示在這裡</div>';
-      return;
-    }
-    grid.innerHTML = '';
-    list.forEach(album => {
-      const card = document.createElement('div');
-      card.className = 'album-card';
-      card.innerHTML = `
+    const list=await loadAlbumsFromGitHub();
+    if (!list.length) { grid.innerHTML='<div class="empty-albums">上傳第一批照片後，相簿會顯示在這裡</div>'; return; }
+    grid.innerHTML='';
+    list.forEach(album=>{
+      const card=document.createElement('div'); card.className='album-card';
+      card.innerHTML=`
         <div class="album-thumb">
-          ${album.thumb ? `<img src="${album.thumb}" alt="" loading="lazy">` : '<div class="no-img">🌸</div>'}
+          ${album.thumb?`<img src="${album.thumb}" alt="" loading="lazy">`:'<div class="no-img">🌸</div>'}
         </div>
         <div class="album-info">
           <div class="album-name">${album.folder}</div>
@@ -391,49 +432,40 @@ async function renderAlbums() {
             <button class="ab-btn ab-open">預覽</button>
           </div>
         </div>`;
-      card.querySelector('.ab-embed').addEventListener('click', e => {
-        e.stopPropagation(); showResult(album.folder);
-        window.scrollTo({top:0,behavior:'smooth'});
+      card.querySelector('.ab-embed').addEventListener('click',e=>{
+        e.stopPropagation(); showResult(album.folder); window.scrollTo({top:0,behavior:'smooth'});
       });
-      card.querySelector('.ab-open').addEventListener('click', e => {
+      card.querySelector('.ab-open').addEventListener('click',e=>{
         e.stopPropagation(); window.open(embedUrl(album.folder),'_blank');
       });
       grid.appendChild(card);
     });
-  } catch(e) {
-    grid.innerHTML = `<div class="empty-albums">載入失敗：${e.message}</div>`;
-  }
+  } catch(e) { grid.innerHTML=`<div class="empty-albums">載入失敗：${e.message}</div>`; }
 }
 
-function copyText(text, okId) {
-  navigator.clipboard.writeText(text).then(() => {
-    const el = document.getElementById(okId);
-    el.classList.add('show');
+function copyText(text,okId) {
+  navigator.clipboard.writeText(text).then(()=>{
+    const el=document.getElementById(okId); el.classList.add('show');
     setTimeout(()=>el.classList.remove('show'),2000);
   });
 }
 
 // ── Events ────────────────────────────────────────────
-const uz = document.getElementById('upload-zone');
-const fi = document.getElementById('file-input');
-fi.addEventListener('change', e => handleUpload([...e.target.files]));
-uz.addEventListener('dragover', e=>{e.preventDefault();uz.classList.add('drag')});
-uz.addEventListener('dragleave', ()=>uz.classList.remove('drag'));
-uz.addEventListener('drop', e=>{
+const uz=document.getElementById('upload-zone');
+const fi=document.getElementById('file-input');
+fi.addEventListener('change',e=>handleUpload([...e.target.files]));
+uz.addEventListener('dragover',e=>{e.preventDefault();uz.classList.add('drag')});
+uz.addEventListener('dragleave',()=>uz.classList.remove('drag'));
+uz.addEventListener('drop',e=>{
   e.preventDefault(); uz.classList.remove('drag');
   handleUpload([...e.dataTransfer.files].filter(f=>f.type.startsWith('image/')));
 });
-document.getElementById('btn-copy-iframe').addEventListener('click', ()=>
+document.getElementById('btn-copy-iframe').addEventListener('click',()=>
   copyText(document.getElementById('res-iframe').textContent,'ok-iframe'));
-document.getElementById('btn-copy-url').addEventListener('click', ()=>
+document.getElementById('btn-copy-url').addEventListener('click',()=>
   copyText(document.getElementById('res-url').textContent,'ok-url'));
 
-// ── Token input: allow Enter key ──
-document.getElementById('token-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') document.getElementById('btn-save-token').click();
-});
-
-refreshTokenUI();
+refreshSetupUI();
 </script>
 </body>
 </html>
