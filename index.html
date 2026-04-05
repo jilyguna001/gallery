@@ -102,7 +102,8 @@ body {
 .ab-btn{flex:1;padding:5px 0;border-radius:5px;font-size:11px;cursor:pointer;border:none;text-align:center;transition:opacity .15s}
 .ab-embed{background:linear-gradient(135deg,var(--pink-3),var(--pink-4));color:#fff}
 .ab-open{background:var(--pink-0);color:var(--text-mid);border:1px solid var(--border-s) !important}
-.ab-btn:hover{opacity:.8}
+.ab-del{background:#fff;color:#e03131;border:1px solid rgba(224,49,49,0.3) !important}
+.ab-del:hover{background:#fff5f5;opacity:1}
 .empty-albums{text-align:center;padding:32px;color:var(--text-soft);font-size:13px}
 @media(max-width:480px){.album-grid{grid-template-columns:1fr 1fr}}
 </style>
@@ -170,7 +171,7 @@ body {
     <div class="field">
       <label>相簿名稱（留空則自動用時間碼命名）</label>
       <input type="text" id="album-name" placeholder="例：2026春季展覽、峇里島旅拍…">
-      <div class="field-hint">自動命名格式：20260405_143022</div>
+      <div class="field-hint">自動命名格式：20260405_143022　⚠️ 請先填好名稱再上傳圖片</div>
     </div>
     <div class="upload-zone disabled" id="upload-zone">
       <input type="file" accept="image/*" multiple id="file-input" disabled>
@@ -338,6 +339,24 @@ async function saveAlbumToGitHub(folder, urls, thumb) {
   await ghPut('albums/index.json', JSON.stringify(index, null, 2), `Update index: ${folder}`, indexFile?.sha);
 }
 
+async function deleteAlbumFromGitHub(folder) {
+  const albumPath = `albums/${folder}.json`;
+  const albumFile = await ghGet(albumPath);
+  if (albumFile) {
+    await fetch(`https://api.github.com/repos/${cfg('ghOwner')}/${cfg('ghRepo')}/contents/${albumPath}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${cfg('ghToken')}`, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: `Delete album: ${folder}`, sha: albumFile.sha, branch: 'main' })
+    });
+  }
+  const indexFile = await ghGet('albums/index.json');
+  if (!indexFile) return;
+  let index = [];
+  try { index = JSON.parse(decodeURIComponent(escape(atob(indexFile.content.replace(/\n/g,''))))); } catch {}
+  index = index.filter(a => a.folder !== folder);
+  await ghPut('albums/index.json', JSON.stringify(index, null, 2), `Delete album: ${folder}`, indexFile.sha);
+}
+
 async function loadAlbumsFromGitHub() {
   const f = await ghGet('albums/index.json');
   if (!f) return [];
@@ -430,6 +449,7 @@ async function renderAlbums() {
           <div class="album-actions">
             <button class="ab-btn ab-embed">取得語法</button>
             <button class="ab-btn ab-open">預覽</button>
+            <button class="ab-btn ab-del">刪除</button>
           </div>
         </div>`;
       card.querySelector('.ab-embed').addEventListener('click',e=>{
@@ -437,6 +457,19 @@ async function renderAlbums() {
       });
       card.querySelector('.ab-open').addEventListener('click',e=>{
         e.stopPropagation(); window.open(embedUrl(album.folder),'_blank');
+      });
+      card.querySelector('.ab-del').addEventListener('click', async e => {
+        e.stopPropagation();
+        if (!confirm(`確定刪除「${album.folder}」？\n（GitHub 記錄會刪除，Cloudinary 圖片需自行至後台清除）`)) return;
+        const btn = e.target;
+        btn.textContent = '刪除中…'; btn.disabled = true;
+        try {
+          await deleteAlbumFromGitHub(album.folder);
+          await renderAlbums();
+        } catch(err) {
+          alert(`刪除失敗：${err.message}`);
+          btn.textContent = '刪除'; btn.disabled = false;
+        }
       });
       grid.appendChild(card);
     });
